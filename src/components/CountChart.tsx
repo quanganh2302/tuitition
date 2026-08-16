@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { RadialBarChart, RadialBar, ResponsiveContainer } from "recharts";
 
-// Donut: tỉ lệ lớp Trung tâm (CENTER) vs Gia sư (PRIVATE).
+// Donut: tỉ lệ thu nhập tháng này giữa lớp Trung tâm (CENTER) vs Gia sư (PRIVATE).
 const CountChart = ({ center, priv }: { center: number; priv: number }) => {
   const data = [
     { name: "Total", count: center + priv, fill: "white" },

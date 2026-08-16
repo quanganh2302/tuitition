@@ -17,10 +17,12 @@ const FinanceChart = ({
   data,
   periodLabel,
   nav,
+  showSalary = true,
 }: {
   data: { name: string; revenue: number; salary: number }[];
   periodLabel?: string;
   nav?: React.ReactNode;
+  showSalary?: boolean;
 }) => {
   const t = useTranslations("Dashboard");
   return (
@@ -65,13 +67,15 @@ const FinanceChart = ({
             stroke="#C3EBFA"
             strokeWidth={4}
           />
-          <Line
-            type="monotone"
-            dataKey="salary"
-            name={t("salary")}
-            stroke="#CFCEFF"
-            strokeWidth={4}
-          />
+          {showSalary && (
+            <Line
+              type="monotone"
+              dataKey="salary"
+              name={t("salary")}
+              stroke="#CFCEFF"
+              strokeWidth={4}
+            />
+          )}
         </LineChart>
       </ResponsiveContainer>
     </div>

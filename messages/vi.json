@@ -51,6 +51,8 @@
     "today": "Hôm nay",
     "this_year": "Năm nay",
     "year_label": "Năm {year}",
+    "this_month": "Tháng này",
+    "month_label": "Tháng {month}/{year}",
     "view_month": "Tháng",
     "view_week": "Tuần",
     "view_3day": "3 ngày",

@@ -24,6 +24,7 @@ const AdminPage = async ({
   const t = await getTranslations("Dashboard");
   const week = Number(searchParams.week) || 0;
   const year = Number(searchParams.year) || 0;
+  const month = Number(searchParams.month) || 0;
 
   let myStudents = 0;
   let income = 0;
@@ -82,7 +83,7 @@ const AdminPage = async ({
         <div className="flex gap-4 flex-col lg:flex-row">
           {/* COUNT CHART */}
           <div className="w-full lg:w-1/3 h-[450px]">
-            <CountChartContainer />
+            <CountChartContainer month={month} />
           </div>
           {/* ATTENDANCE CHART */}
           <div className="w-full lg:w-2/3 h-[450px]">

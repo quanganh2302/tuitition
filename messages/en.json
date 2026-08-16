@@ -51,6 +51,8 @@
     "today": "Today",
     "this_year": "This year",
     "year_label": "Year {year}",
+    "this_month": "This month",
+    "month_label": "Month {month}/{year}",
     "view_month": "Month",
     "view_week": "Week",
     "view_3day": "3-day",

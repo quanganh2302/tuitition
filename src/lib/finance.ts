@@ -188,9 +188,13 @@ export const computeTeacherSalary = async (
     const owner = s.class.teacher; // tham số lương của CHỦ LỚP
     if (!owner) continue; // lớp chưa gán chủ → không tính được
 
+    // Lớp nhóm sĩ số (D2, không điểm danh từng HS): lương = pay đã chốt lúc điểm danh sĩ số,
+    // không tính qua attendances (luôn rỗng cho lớp này).
     const presentCount = s.attendances.length;
     const amount =
-      s.class.type === "PRIVATE"
+      s.pay !== null
+        ? s.pay
+        : s.class.type === "PRIVATE"
         ? owner.privateRatePerSession
         : owner.centerBasePerSession + presentCount * owner.centerRatePerStudent;
 
