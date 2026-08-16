@@ -10,6 +10,7 @@ import prisma from "@/lib/prisma";
 import { getScope } from "@/lib/scope";
 import { isSoloAdmin } from "@/lib/solo";
 import { computeSoloIncome } from "@/lib/finance";
+import { randomBgImage } from "@/lib/utils";
 import { getTranslations } from "next-intl/server";
 
 const AdminPage = async ({
@@ -47,13 +48,25 @@ const AdminPage = async ({
           {isSolo ? (
             <>
               <WeatherCard />
-              <div className="rounded-2xl bg-lucasPurple p-4 flex-1 min-w-[130px] flex flex-col justify-center">
-                <h1 className="text-2xl font-semibold">{myStudents}</h1>
-                <h2 className="text-sm font-medium text-gray-600 mt-2">{t("solo_my_students")}</h2>
+              <div
+                className="relative overflow-hidden rounded-2xl bg-lucasPurple bg-cover bg-center p-4 flex-1 min-w-[130px] flex flex-col justify-center"
+                style={{ backgroundImage: `url(${randomBgImage("students")})` }}
+              >
+                <div className="absolute inset-0 z-0 bg-black/20" />
+                <div className="relative z-10 text-white">
+                  <h1 className="text-2xl font-semibold">{myStudents}</h1>
+                  <h2 className="text-sm font-medium text-white/70 mt-2">{t("solo_my_students")}</h2>
+                </div>
               </div>
-              <div className="rounded-2xl bg-lucasYellow p-4 flex-1 min-w-[130px] flex flex-col justify-center">
-                <h1 className="text-2xl font-semibold">{income.toLocaleString("vi-VN")}₫</h1>
-                <h2 className="text-sm font-medium text-gray-600 mt-2">{t("solo_income")}</h2>
+              <div
+                className="relative overflow-hidden rounded-2xl bg-lucasYellow bg-cover bg-center p-4 flex-1 min-w-[130px] flex flex-col justify-center"
+                style={{ backgroundImage: `url(${randomBgImage("money")})` }}
+              >
+                <div className="absolute inset-0 z-0 bg-black/20" />
+                <div className="relative z-10 text-white">
+                  <h1 className="text-2xl font-semibold">{income.toLocaleString("vi-VN")}₫</h1>
+                  <h2 className="text-sm font-medium text-white/70 mt-2">{t("solo_income")}</h2>
+                </div>
               </div>
             </>
           ) : (

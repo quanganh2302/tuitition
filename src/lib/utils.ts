@@ -65,11 +65,14 @@ export const toVietnamMidnightUTC = (date: Date): Date => {
   return new Date(utc - vietnamOffset * 60 * 1000);
 };
 
-// URL ảnh nền random (Picsum, free, không cần key) — đổi ảnh khác mỗi lần render (mỗi lần load trang).
+// URL ảnh nền random, free, không cần key — đổi ảnh khác mỗi lần render (mỗi lần load trang).
+// Có keyword (vd "student", "money") → LoremFlickr (search theo tag Flickr). Không keyword → Picsum (ảnh bất kỳ).
 // Không optimize qua next/image (không cần thiết cho ảnh trang trí), dùng trực tiếp làm CSS backgroundImage.
-export const randomBgImage = (w = 600, h = 400): string => {
+export const randomBgImage = (keyword?: string, w = 600, h = 400): string => {
   const seed = Math.floor(Math.random() * 100000);
-  return `https://picsum.photos/seed/${seed}/${w}/${h}`;
+  return keyword
+    ? `https://loremflickr.com/${w}/${h}/${keyword}?random=${seed}`
+    : `https://picsum.photos/seed/${seed}/${w}/${h}`;
 };
 
 export const getVietnamDateRangeThisWeek = () => {
