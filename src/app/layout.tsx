@@ -10,8 +10,12 @@ import "react-toastify/dist/ReactToastify.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Lucas Dev School Management Dashboard",
-  description: "Next.js School Management System",
+  title: "Quản lý trung tâm dạy nhạc · KAT Solutions",
+  description: "Quản lý học viên, lớp học, điểm danh, học phí và lương giáo viên.",
+  icons: {
+    // Trỏ thẳng icon gốc của Kat (không copy file) để tự động theo khi Kat đổi logo.
+    icon: [{ url: "https://www.kat-solutions.net/icon.svg", type: "image/svg+xml" }],
+  },
 };
 
 export default async function RootLayout({
