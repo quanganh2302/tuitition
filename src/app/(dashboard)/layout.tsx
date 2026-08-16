@@ -1,6 +1,7 @@
 import Menu from "@/components/Menu";
 import Navbar from "@/components/Navbar";
 import SignedOutRedirect from "@/components/SignedOutRedirect";
+import SupportHub from "@/components/SupportHub";
 import { getScope } from "@/lib/scope";
 import { UserButton } from "@clerk/nextjs";
 import { clerkClient } from "@clerk/nextjs/server";
@@ -71,6 +72,7 @@ export default async function DashboardLayout({
             được bình thường thay vì bị cắt mất nội dung tràn màn hình. */}
         <div className="flex-1 min-h-0 overflow-auto flex flex-col">{children}</div>
       </div>
+      <SupportHub />
     </div>
   );
 }

@@ -362,5 +362,19 @@
     "cancel": "Cancel",
     "saved": "Session logged!",
     "failed": "Failed to log session!"
+  },
+  "Support": {
+    "open": "Open support",
+    "close": "Close",
+    "title": "Support",
+    "subtitle": "Pick the channel that suits you",
+    "chatbot_name": "Chatbot",
+    "chatbot_desc": "Instant replies",
+    "messenger_name": "Messenger",
+    "messenger_desc": "Chat on Facebook",
+    "zalo_name": "Zalo",
+    "zalo_desc": "Chat on Zalo",
+    "hotline_name": "Hotline",
+    "hotline_desc": "Talk to our team"
   }
 }

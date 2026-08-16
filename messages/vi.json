@@ -362,5 +362,19 @@
     "cancel": "Huỷ",
     "saved": "Đã ghi buổi!",
     "failed": "Ghi buổi thất bại!"
+  },
+  "Support": {
+    "open": "Mở hỗ trợ",
+    "close": "Đóng",
+    "title": "Hỗ trợ",
+    "subtitle": "Chọn kênh phù hợp với bạn",
+    "chatbot_name": "Trợ lý ảo",
+    "chatbot_desc": "Phản hồi tức thì",
+    "messenger_name": "Messenger",
+    "messenger_desc": "Nhắn qua Facebook",
+    "zalo_name": "Zalo",
+    "zalo_desc": "Nhắn qua Zalo",
+    "hotline_name": "Hotline",
+    "hotline_desc": "Hỗ trợ trực tiếp"
   }
 }
