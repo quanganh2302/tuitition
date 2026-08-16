@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.react-calendar {
+  width: 100% !important;
+  border: none !important;
+  font-family: "Inter", sans-serif !important;
+}
+
+/* Cho badge số lớp canh góc trên-phải mỗi ô ngày */
+.react-calendar__tile {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+.react-calendar__navigation__label__labelText {
+  font-weight: 600;
+}
+
+.react-calendar__tile--active {
+  background-color: #c3ebfa !important;
+  color: black !important;
+}
+
+/* ===== react-big-calendar — giao diện gọn, đồng bộ app (toolbar dùng bản tuỳ biến) ===== */
+.rbc-time-view {
+  border-color: #eee !important;
+}
+
+/* Dải header thứ/ngày — nền riêng, chữ đậm, tách khỏi lưới bên dưới */
+.rbc-time-header {
+  display: flex !important;
+}
+.rbc-time-header,
+.rbc-month-header {
+  background: #f6f6fb !important;
+}
+.rbc-header {
+  padding: 6px 4px !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  color: #4b5563 !important;
+  border-bottom: none !important;
+}
+
+/* Bỏ dải "all-day" trống ở header tuần/ngày → gọn như header tháng (app không dùng sự kiện cả ngày) */
+.rbc-allday-cell {
+  display: none !important;
+}
+
+/* Lưới giờ (tuần/ngày) — nền trắng sạch. Giữ padding gutter cũ để header-gutter khớp cột. */
+.rbc-time-content {
+  border: none !important;
+}
+.rbc-time-gutter.rbc-time-column {
+  font-size: 12px !important;
+}
+.rbc-time-gutter.rbc-time-column .rbc-timeslot-group {
+  padding: 0px 20px !important;
+}
+.rbc-timeslot-group {
+  background-color: #ffffff !important;
+}
+.rbc-day-slot {
+  font-size: 14px !important;
+}
+
+/* Tháng — ngày ngoài tháng nhạt, hôm nay nhẹ nhàng */
+.rbc-off-range-bg {
+  background: #fafafb !important;
+}
+.rbc-today {
+  background: #eef6ff !important;
+}
+
+/* Sự kiện — màu do eventPropGetter quyết định (buổi thật = xanh, dự kiến = xám gạch đứt) */
+.rbc-event {
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 6px 10px !important;
+  margin: 6px !important;
+  width: 97% !important;
+}
+/* Màn hình hẹp (điện thoại) — CHỈ view Tuần (.rbc-force-scroll, xem BigCalender.tsx): 7 cột đủ rộng
+   để đọc được, cuộn NGANG thay vì bóp chật. View 3-ngày/Ngày mặc định trên mobile vừa khít sẵn,
+   không được ép min-width kẻo chỉ hiện được 1 cột. */
+@media (max-width: 767px) {
+  .rbc-force-scroll .rbc-time-view {
+    overflow-x: auto !important;
+  }
+  .rbc-force-scroll .rbc-time-header-content,
+  .rbc-force-scroll .rbc-time-content {
+    min-width: 700px !important;
+  }
+}
+
+.rbc-event-label {
+  color: #6b7280 !important;
+  font-size: 11px !important;
+  margin-bottom: 4px;
+}

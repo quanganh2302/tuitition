@@ -1,0 +1,257 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Admin {
+  id       String @id @default(uuid())
+  username String @unique
+}
+
+model User {
+  id       String @id @default(uuid())
+  username String @unique
+  password String
+  email    String @unique
+  role     Role
+}
+
+// Teacher of the center — logs in (Clerk), manages own classes & students
+model Teacher {
+  id          String   @id // = Clerk userId
+  orgId       String? // Clerk Organization id (tenant). nullable để migrate an toàn; backfill/seed sau
+  username    String   @unique
+  teacherName String
+  searchName  String   @default("") // teacherName bỏ dấu + thường (search không dấu)
+  email       String?  @unique
+  phone       String?  @unique
+  avatar      String?
+  sex         UserSex
+  subject     String? // bộ môn / nhạc cụ (piano, guitar, violin...)
+
+  // Salary params — per teacher (VND)
+  privateRatePerSession Int @default(0) // gia sư: đơn giá / buổi
+  centerBasePerSession  Int @default(0) // lớp TT: mốc cố định / buổi
+  centerRatePerStudent  Int @default(0) // lớp TT: cộng thêm / mỗi HS có mặt
+
+  classes        Class[]
+  ownedStudents  Student[]      @relation("StudentOwner")
+  taughtSessions ClassSession[] @relation("SessionTaughtBy")
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@index([orgId])
+}
+
+model Student {
+  id             String           @id @default(uuid())
+  orgId          String? // Clerk Organization id (tenant)
+  username       String           @unique
+  studentName    String
+  searchName     String           @default("") // studentName bỏ dấu + thường
+  email          String?          @unique
+  avatar         String?
+  phone          String?          @unique
+  password       String?
+  address        String
+  isStudying     Boolean
+  sex            UserSex
+  tuition        Int
+  lessonType     LessonType
+  classes        Class[]          @relation("StudentClasses")
+  assignments    Assignment[]
+  monthlyTuition MonthlyTuition[]
+  attendances    Attendance[]
+  parentId       String?
+  parent         Parent?          @relation(fields: [parentId], references: [id])
+  ownerTeacherId String?
+  ownerTeacher   Teacher?         @relation("StudentOwner", fields: [ownerTeacherId], references: [id])
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  StudentClass   StudentClass[]
+
+  @@index([orgId])
+}
+
+// Class Schedule model
+
+model Class {
+  id             String           @id @default(uuid())
+  orgId          String? // Clerk Organization id (tenant)
+  className      String
+  searchName     String           @default("") // className bỏ dấu + thường
+  type           ClassType        @default(CENTER) // CENTER = lớp nhóm · PRIVATE = gia sư 1-1
+  date           Day
+  endDate        DateTime? // ngày kết thúc lớp (null = đang học). Sinh buổi dừng ở đây; giải phóng ô-giờ.
+  teacherId      String? // GV phụ trách (nullable để migrate an toàn cho lớp cũ)
+  teacher        Teacher?         @relation(fields: [teacherId], references: [id])
+  classSessions  ClassSession[]
+  students       Student[]        @relation("StudentClasses")
+  // Lớp nhóm tính theo SĨ SỐ (D2): groupBasePerSession != null → không roster, không điểm danh từng HS.
+  // Lương/buổi = base + max(0, sĩ số − 1) × rate. rate đổi theo thời gian (sửa lớp); buổi snapshot `pay`.
+  groupBasePerSession Int? // mốc cố định / buổi
+  groupRatePerStudent Int? // + mỗi HS thêm (từ HS thứ 2)
+  color          String? // key màu lịch (1 trong 5 màu cố định, xem lib/classColors.ts) — chỉ áp cho lớp PRIVATE; lớp CENTER dùng chung 1 màu mặc định
+  startTime      DateTime
+  endTime        DateTime
+  StudentClass   StudentClass[]
+  MonthlyTuition MonthlyTuition[]
+
+  @@index([orgId])
+}
+
+model StudentClass {
+  studentId String
+  classId   String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  class     Class   @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  @@id([studentId, classId]) // Composite primary key
+}
+
+// Result of a assignment of a student
+model Assignment {
+  id        Int      @id @default(autoincrement())
+  title     String
+  startDate DateTime
+  dueDate   DateTime
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id])
+  video     String?
+}
+
+model ClassSession {
+  id          String       @id @default(uuid())
+  orgId       String? // Clerk Organization id (tenant)
+  classId     String
+  class       Class        @relation(fields: [classId], references: [id])
+  status      ClassStatus  @default(UPCOMING)
+  date        DateTime
+  createdAt   DateTime     @default(now())
+  tuition     Int          @default(0)
+  taughtById  String? // người thực dạy buổi này (mặc định = chủ lớp; admin đổi khi dạy thay)
+  taughtBy    Teacher?     @relation("SessionTaughtBy", fields: [taughtById], references: [id])
+  attendances Attendance[]
+  // Lớp nhóm KHÔNG hồ sơ HS (D2): headcount = số HS buổi đó; pay = tiền GV nhận buổi đó.
+  headcount   Int? // null = lớp thường (đếm qua attendances)
+  pay         Int? // tiền GV cho buổi lớp nhóm (lịch sử lưu số thật; tương lai = base + công thức)
+
+  @@unique([classId, date])
+  @@index([orgId])
+}
+
+// Điểm danh cấp học viên — HV nào có mặt ở buổi nào
+model Attendance {
+  id             String           @id @default(uuid())
+  classSessionId String
+  classSession   ClassSession     @relation(fields: [classSessionId], references: [id], onDelete: Cascade)
+  studentId      String
+  student        Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  status         AttendanceStatus @default(PRESENT)
+  createdAt      DateTime         @default(now())
+
+  @@unique([classSessionId, studentId])
+}
+
+model Parent {
+  id         String    @id @default(uuid())
+  orgId      String? // Clerk Organization id (tenant)
+  parentName String
+  searchName String    @default("") // parentName bỏ dấu + thường
+  sex        UserSex
+  phone      String?   @unique
+  students   Student[]
+
+  @@index([orgId])
+}
+
+// Assignment of a student
+model SheetMusic {
+  id          String @id @default(uuid())
+  title       String
+  composer    String
+  description String
+  difficulty  String
+  image       String
+}
+// Announcement 
+model MonthlyTuition {
+  id          String     @id @default(uuid())
+  orgId       String? // Clerk Organization id (tenant)
+  student     Student    @relation(fields: [studentId], references: [id])
+  studentId   String
+  class       Class      @relation(fields: [classId], references: [id])
+  classId     String
+  year        Int
+  month       Int
+  totalAmount Float
+  paidStatus  PaidStatus @default(UNPAID)
+  createdAt   DateTime   @default(now())
+
+  @@unique([studentId, classId, year, month])
+  @@index([orgId])
+}
+
+enum Day {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum UserSex {
+  MALE
+  FEMALE
+}
+
+enum LessonType {
+  CENTER
+  HOME
+}
+
+enum PaidStatus {
+  PAID
+  UNPAID
+}
+
+enum ClassStatus {
+  CANCELED
+  UPCOMING
+  TAUGHT
+}
+
+enum ClassType {
+  CENTER // lớp trung tâm (1 GV – nhiều HV)
+  PRIVATE // gia sư (1 GV – 1 HV)
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  EXCUSED
+}
