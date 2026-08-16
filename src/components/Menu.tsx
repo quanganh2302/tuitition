@@ -37,9 +37,12 @@ const Menu = async () => {
   // Solo → nhãn "Giáo viên" đổi thành "Lịch dạy của tôi". Nhận diện độc lập active org (lib/solo).
   const isSolo = role === "admin" && (await isSoloAdmin(scope.userId));
   return (
-    <div className="mt-4 text-sm">
-      {menuItems.map((group) => (
-        <div className="flex flex-col gap-2" key={group.titleKey}>
+    <div className="mt-4 text-sm flex-1 flex flex-col min-h-0">
+      {menuItems.map((group, i) => (
+        <div
+          className={`flex flex-col gap-2 ${i === menuItems.length - 1 ? "mt-auto" : ""}`}
+          key={group.titleKey}
+        >
           <span className="hidden lg:block text-gray-400 font-light my-4">
             {t(group.titleKey)}
           </span>

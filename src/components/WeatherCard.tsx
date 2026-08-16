@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { cookies } from "next/headers";
-import { randomBgImage } from "@/lib/utils";
+import { dailyBgImage } from "@/lib/utils";
 import WeatherCitySwitcher from "./WeatherCitySwitcher";
 
 // Thẻ thời tiết THẬT (Open-Meteo, free, không cần API key). Server component, cache 30 phút.
@@ -52,7 +52,7 @@ const WeatherCard = async () => {
   return (
     <div
       className="relative overflow-hidden rounded-2xl p-6 flex-1 min-w-[200px] text-white bg-gradient-to-br from-sky-400 to-blue-600 bg-cover bg-center"
-      style={{ backgroundImage: `url(${randomBgImage()})` }}
+      style={{ backgroundImage: `url(${dailyBgImage("weather")})` }}
     >
       <div className="absolute inset-0 z-0 bg-black/30" />
       <div className="relative z-10">

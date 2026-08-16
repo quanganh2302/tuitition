@@ -4,7 +4,7 @@ import FormContainer from "@/components/FormContainer";
 import StudentAttendanceGauge from "@/components/StudentAttendanceGauge";
 import prisma from "@/lib/prisma";
 import { getScope } from "@/lib/scope";
-import { randomBgImage, toVietnamMidnightUTC } from "@/lib/utils";
+import { dailyBgImage, toVietnamMidnightUTC } from "@/lib/utils";
 import { getTranslations } from "next-intl/server";
 import { Teacher } from "@prisma/client";
 import Image from "next/image";
@@ -96,7 +96,7 @@ const SingleTeacherPage = async ({
           {/* USER INFO CARD */}
           <div
             className="relative overflow-hidden bg-lucasSky bg-cover bg-center py-6 px-4 rounded-md flex-1 flex gap-4"
-            style={{ backgroundImage: `url(${randomBgImage()})` }}
+            style={{ backgroundImage: `url(${dailyBgImage(`teacher-${teacher.id}`)})` }}
           >
             <div className="absolute inset-0 z-0 bg-black/20" />
             <div className="relative z-10 w-1/3">

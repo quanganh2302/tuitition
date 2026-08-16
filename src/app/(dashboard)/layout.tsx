@@ -5,18 +5,29 @@ import { getScope } from "@/lib/scope";
 import { UserButton } from "@clerk/nextjs";
 import { clerkClient } from "@clerk/nextjs/server";
 import { getTranslations } from "next-intl/server";
+import { unstable_cache } from "next/cache";
 import Image from "next/image";
 import Link from "next/link";
 
 // Trung tâm bị super-admin khoá → chặn truy cập (cờ suspended trên org publicMetadata).
+// Cache 60s: tránh gọi API Clerk sống trên MỖI lần điều hướng (đang chặn cả layout, kể cả
+// loading.tsx, hiện ra — cache giúp hầu hết lần vào trang không phải chờ round-trip này).
+const fetchOrgSuspended = unstable_cache(
+  async (orgId: string) => {
+    try {
+      const org = await clerkClient.organizations.getOrganization({ organizationId: orgId });
+      return (org.publicMetadata as { suspended?: boolean })?.suspended === true;
+    } catch {
+      return false; // không chặn nếu tra cứu lỗi
+    }
+  },
+  ["org-suspended-check"],
+  { revalidate: 60 }
+);
+
 const isOrgSuspended = async (orgId: string | null | undefined) => {
   if (!orgId) return false;
-  try {
-    const org = await clerkClient.organizations.getOrganization({ organizationId: orgId });
-    return (org.publicMetadata as { suspended?: boolean })?.suspended === true;
-  } catch {
-    return false; // không chặn nếu tra cứu lỗi
-  }
+  return fetchOrgSuspended(orgId);
 };
 
 export default async function DashboardLayout({
@@ -41,7 +52,7 @@ export default async function DashboardLayout({
     <div className="h-screen flex">
       <SignedOutRedirect />
       {/* LEFT */}
-      <div className="w-[14%] md:w-[8%] lg:w-[16%] xl:w-[14%] p-4">
+      <div className="w-[14%] md:w-[8%] lg:w-[16%] xl:w-[14%] p-4 flex flex-col h-full">
         <Link
           href="/"
           className="flex items-center justify-center lg:justify-start gap-2"

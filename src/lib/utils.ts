@@ -65,15 +65,24 @@ export const toVietnamMidnightUTC = (date: Date): Date => {
   return new Date(utc - vietnamOffset * 60 * 1000);
 };
 
-// URL ảnh nền random, free, không cần key — đổi ảnh khác mỗi lần render (mỗi lần load trang).
-// Có keyword (vd "student", "money") → LoremFlickr (search theo tag Flickr). Không keyword → Picsum (ảnh bất kỳ).
-// Không optimize qua next/image (không cần thiết cho ảnh trang trí), dùng trực tiếp làm CSS backgroundImage.
-export const randomBgImage = (keyword?: string, w = 600, h = 400): string => {
-  const seed = Math.floor(Math.random() * 100000);
-  return keyword
-    ? `https://loremflickr.com/${w}/${h}/${keyword}?random=${seed}`
-    : `https://picsum.photos/seed/${seed}/${w}/${h}`;
+const hashSeed = (s: string): number => {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return h;
 };
+
+// Seed chung: ngày hiện tại (+ id tuỳ chọn) — ảnh cố định trong ngày (không đổi khi router.refresh()/
+// điều hướng qua lại làm server component re-render), chỉ đổi ảnh khác vào hôm sau.
+const dailySeed = (id = "") => `${new Date().toISOString().slice(0, 10)}${id}`;
+
+// URL ảnh nền cố định theo ngày (Picsum, free, không cần key). Không optimize qua next/image
+// (không cần thiết cho ảnh trang trí), dùng trực tiếp làm CSS backgroundImage.
+export const dailyBgImage = (id = "", w = 600, h = 400): string =>
+  `https://picsum.photos/seed/${dailySeed(id)}/${w}/${h}`;
+
+// URL ảnh nền theo chủ đề, cố định theo ngày (LoremFlickr, free, không cần key, search theo tag Flickr).
+export const dailyThemedBgImage = (keyword: string, id = "", w = 600, h = 400): string =>
+  `https://loremflickr.com/${w}/${h}/${keyword}?lock=${hashSeed(dailySeed(id))}`;
 
 export const getVietnamDateRangeThisWeek = () => {
   const now = new Date();
