@@ -32,9 +32,6 @@ const StudentForm = ({
   } = useForm<StudentSchema>({
     resolver: zodResolver(studentSchema),
   });
-  useEffect(() => {
-    console.log("StudentForm received data:", data);
-  }, []);
   const [state, formAction] = useFormState(
     type === "create" ? createStudent : updateStudent,
     {
@@ -45,24 +42,8 @@ const StudentForm = ({
   const [img, setImg] = useState<any>();
 
   const onSubmit = handleSubmit((data) => {
-    try {
-      console.log(data);
-      formAction({ ...data, avatar: img?.secure_url });
-    } catch (error) {
-      console.error("Form submission error:", error);
-      // Handle the error appropriately
-    }
+    formAction({ ...data, avatar: img?.secure_url });
   });
-
-  // const onSubmit = handleSubmit(
-  //   (data) => {
-  //     console.log("Form submitted:", data);
-  //     formAction(data);
-  //   },
-  //   (errors) => {
-  //     console.error("Validation errors:", errors);
-  //   }
-  // );
 
   const router = useRouter();
 
@@ -103,16 +84,20 @@ const StudentForm = ({
           register={register}
           error={errors.address}
         />
-        <InputField
-          label={tf("tuition_per_session")}
-          name="tuition"
-          type="number"
-          defaultValue={
-            data?.tuition !== undefined ? data.tuition.toString() : ""
-          }
-          register={register}
-          error={errors.tuition}
-        />
+        <div className="flex flex-col gap-2 w-full md:w-1/4">
+          <label className="text-xs text-gray-500">{tc("sex")}</label>
+          <select
+            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
+            {...register("sex")}
+            defaultValue={data?.sex}
+          >
+            <option value="MALE">{tc("male")}</option>
+            <option value="FEMALE">{tc("female")}</option>
+          </select>
+          {errors.sex && (
+            <p className="text-xs text-red-400">{errors.sex.message}</p>
+          )}
+        </div>
         {data && (
           <InputField
             label="Id"
@@ -123,28 +108,32 @@ const StudentForm = ({
             hidden
           />
         )}
+      </div>
+
+      <span className="text-xs text-gray-400 font-medium">{tf("section_class")}</span>
+      <div className="flex justify-between flex-wrap gap-4">
+        <InputField
+          label={tf("tuition_per_session")}
+          name="tuition"
+          type="number"
+          defaultValue={
+            data?.tuition !== undefined ? data.tuition.toString() : ""
+          }
+          register={register}
+          error={errors.tuition}
+        />
         <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">{tf("classes")}</label>
+          <label className="text-xs text-gray-500">{tf("lesson_type")}</label>
           <select
-            multiple
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
-            {...register("classes")}
-            defaultValue={data?.classes?.map((c: any) =>
-              typeof c === "string" ? c : c.id
-            )}
+            {...register("lessonType")}
+            defaultValue={data?.lessonType}
           >
-            {classes?.map((cls: { id: string; className: string }) => {
-              return (
-                <option value={cls.id} key={cls.id}>
-                  {cls.className}
-                </option>
-              );
-            })}
+            <option value="CENTER">{tf("lesson_type_center")}</option>
+            <option value="HOME">{tf("lesson_type_home")}</option>
           </select>
-          {errors.classes?.message && (
-            <p className="text-xs text-red-400">
-              {errors.classes.message.toString()}
-            </p>
+          {errors.lessonType && (
+            <p className="text-xs text-red-400">{errors.lessonType.message}</p>
           )}
         </div>
         {/* Giáo viên phụ trách — chỉ admin mới chọn; teacher tạo là tự gán mình */}
@@ -170,6 +159,48 @@ const StudentForm = ({
             )}
           </div>
         )}
+        <div className="flex flex-col gap-2 w-full md:w-1/4">
+          <label className="text-xs text-gray-500">{tf("classes")}</label>
+          <select
+            multiple
+            size={4}
+            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
+            {...register("classes")}
+            defaultValue={data?.classes?.map((c: any) =>
+              typeof c === "string" ? c : c.id
+            )}
+          >
+            {classes?.map((cls: { id: string; className: string }) => {
+              return (
+                <option value={cls.id} key={cls.id}>
+                  {cls.className}
+                </option>
+              );
+            })}
+          </select>
+          <p className="text-[11px] text-gray-400">{tf("classes_hint")}</p>
+          {errors.classes?.message && (
+            <p className="text-xs text-red-400">
+              {errors.classes.message.toString()}
+            </p>
+          )}
+        </div>
+      </div>
+
+      <span className="text-xs text-gray-400 font-medium">{tf("section_other")}</span>
+      <div className="flex items-center flex-wrap gap-6">
+        <label className="flex items-center gap-2 text-sm text-gray-600 ring-[1.5px] ring-gray-300 rounded-md px-3 py-2 cursor-pointer">
+          <input
+            type="checkbox"
+            {...register("isStudying")}
+            className="w-4 h-4 accent-lucasPurple"
+            defaultChecked={data?.isStudying ?? false}
+          />
+          {tf("is_studying")}
+        </label>
+        {errors.isStudying && (
+          <p className="text-xs text-red-400">{errors.isStudying.message}</p>
+        )}
         <CldUploadWidget
           uploadPreset="diemDanh"
           onSuccess={(result, { widget }) => {
@@ -189,46 +220,6 @@ const StudentForm = ({
             );
           }}
         </CldUploadWidget>
-        <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500 flex items-center gap-2">
-            <input
-              type="checkbox"
-              {...register("isStudying")}
-              className="w-4 h-4"
-              defaultChecked={data?.isStudying ?? false}
-            />
-            {tf("is_studying")}
-          </label>
-          {errors.isStudying && (
-            <p className="text-xs text-red-400">{errors.isStudying.message}</p>
-          )}
-        </div>
-        <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">{tc("sex")}</label>
-          <select
-            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
-            {...register("sex")}
-          >
-            <option value="MALE">{tc("male")}</option>
-            <option value="FEMALE">{tc("female")}</option>
-          </select>
-          {errors.sex && (
-            <p className="text-xs text-red-400">{errors.sex.message}</p>
-          )}
-        </div>
-        <div className="flex flex-col gap-2 w-full md:w-1/4">
-          <label className="text-xs text-gray-500">{tf("lesson_type")}</label>
-          <select
-            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
-            {...register("lessonType")}
-          >
-            <option value="CENTER">{tf("lesson_type_center")}</option>
-            <option value="HOME">{tf("lesson_type_home")}</option>
-          </select>
-          {errors.lessonType && (
-            <p className="text-xs text-red-400">{errors.lessonType.message}</p>
-          )}
-        </div>
       </div>
       {state.error && (
         <span className="text-red-500">

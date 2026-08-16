@@ -20,6 +20,11 @@ const config: Config = {
         lucasPurpleLight: "#F1F0FF",
         lucasYellow: "#FAE27C",
         lucasYellowLight: "#FEFCE8",
+        // Dải lạnh→nóng cho badge số lượng (1→5, >5) — xem EventCalendar.tsx.
+        lucasGreen: "#C3FAD1",
+        lucasOrange: "#FAC38A",
+        lucasRed: "#FAB0B0",
+        lucasRedDark: "#F2726A",
       },
     },
   },
