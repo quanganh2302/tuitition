@@ -53,7 +53,10 @@ const ChatView = ({ msgs, setMsgs }: { msgs: Msg[]; setMsgs: (fn: (m: Msg[]) => 
   const [loading, setLoading] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => endRef.current?.scrollIntoView({ block: "end" }), [msgs, loading]);
+  // Giữ dấu ngoặc nhọn: Chrome mới cho scrollIntoView trả Promise, React sẽ hiểu nhầm là hàm cleanup.
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ block: "end" });
+  }, [msgs, loading]);
 
   const send = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,7 +66,7 @@ const ChatView = ({ msgs, setMsgs }: { msgs: Msg[]; setMsgs: (fn: (m: Msg[]) => 
     setMsgs((m) => [...m, { from: "user", text }]);
     setLoading(true);
     try {
-      const res = await fetch("/api/chat", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: text }),
