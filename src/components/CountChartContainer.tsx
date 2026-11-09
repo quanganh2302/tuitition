@@ -63,9 +63,14 @@ const CountChartContainer = async ({ month: monthOffset = 0 }: { month?: number 
   const fmt = (n: number) => `${n.toLocaleString("vi-VN")}₫`;
 
   return (
-    <div className="bg-white rounded-xl w-full h-full p-4">
+    <div className="bg-white rounded-xl w-full h-full p-4 transition-opacity has-[[aria-busy=true]]:opacity-60">
       <div className="flex justify-between items-center">
-        <h1 className="text-lg font-semibold">{t("class_types")}</h1>
+        <div>
+          <h1 className="text-lg font-semibold">{t("class_types")}</h1>
+          <span className="text-xs text-gray-400">
+            {month}/{year}
+          </span>
+        </div>
         <PeriodNav value={monthOffset} param="month" resetLabel={tc("this_month")} />
       </div>
       <CountChart center={center} priv={priv} />

@@ -1,7 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 
@@ -26,13 +25,6 @@ const EventCalendar = ({
   classCountByWeekday?: number[];
 }) => {
   const [value, onChange] = useState<Value>(new Date());
-  const router = useRouter();
-
-  useEffect(() => {
-    if (value instanceof Date) {
-      router.push(`?date=${value}`);
-    }
-  }, [value, router]);
 
   return (
     <Calendar

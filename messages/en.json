@@ -375,6 +375,15 @@
     "zalo_name": "Zalo",
     "zalo_desc": "Chat on Zalo",
     "hotline_name": "Hotline",
-    "hotline_desc": "Talk to our team"
+    "hotline_desc": "Talk to our team",
+    "chat_back": "Back",
+    "chat_greeting": "Hi! I'm the virtual assistant. How can I help?",
+    "chat_placeholder": "Type your question...",
+    "chat_send": "Send",
+    "chat_typing": "Typing...",
+    "chat_error_failed": "The assistant is having trouble, please try again later.",
+    "chat_error_too_long": "Message is too long (max 1000 characters).",
+    "chat_error_rate_limited": "You're sending too fast, please wait a few minutes.",
+    "chat_error_unauthorized": "Your session has expired, please sign in again."
   }
 }

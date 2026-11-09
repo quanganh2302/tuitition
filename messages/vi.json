@@ -375,6 +375,15 @@
     "zalo_name": "Zalo",
     "zalo_desc": "Nhắn qua Zalo",
     "hotline_name": "Hotline",
-    "hotline_desc": "Hỗ trợ trực tiếp"
+    "hotline_desc": "Hỗ trợ trực tiếp",
+    "chat_back": "Quay lại",
+    "chat_greeting": "Xin chào! Mình là trợ lý ảo. Bạn cần hỗ trợ gì?",
+    "chat_placeholder": "Nhập câu hỏi...",
+    "chat_send": "Gửi",
+    "chat_typing": "Đang trả lời...",
+    "chat_error_failed": "Trợ lý đang gặp sự cố, vui lòng thử lại sau.",
+    "chat_error_too_long": "Tin nhắn quá dài (tối đa 1000 ký tự).",
+    "chat_error_rate_limited": "Bạn gửi hơi nhanh, vui lòng thử lại sau ít phút.",
+    "chat_error_unauthorized": "Phiên đăng nhập đã hết, vui lòng đăng nhập lại."
   }
 }
