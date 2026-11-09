@@ -65,7 +65,7 @@ const AttendanceChartContainer = async ({ week = 0 }: { week?: number }) => {
   const data = days.map((d) => ({ name: labels[d], center: center[d], private: priv[d] }));
 
   return (
-    <div className="bg-white rounded-lg p-4 h-full">
+    <div className="bg-white rounded-lg p-4 h-full transition-opacity has-[[aria-busy=true]]:opacity-60">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-lg font-semibold">{t("week_revenue")}</h1>

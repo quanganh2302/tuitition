@@ -26,7 +26,7 @@ const FinanceChart = ({
 }) => {
   const t = useTranslations("Dashboard");
   return (
-    <div className="bg-white rounded-xl w-full h-full p-4">
+    <div className="bg-white rounded-xl w-full h-full p-4 transition-opacity has-[[aria-busy=true]]:opacity-60">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-lg font-semibold">{t("finance_title")}</h1>
